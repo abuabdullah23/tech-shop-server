@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config()
 const app = express();
@@ -29,12 +29,46 @@ async function run() {
 
         // ================ create db collection and api start ======================
         const productsCollection = client.db("techShopDB").collection("products")
+        const cartCollection = client.db("techShopDB").collection("cart")
 
         // all post method
         app.post('/add-product', async (req, res) => {
             const productInfo = req.body;
-            console.log(productInfo);
             const result = await productsCollection.insertOne(productInfo);
+            res.send(result);
+        })
+
+        // add to cart product by user
+        app.post('/add-cart', async (req, res) => {
+            const productInfo = req.body;
+            const result = await cartCollection.insertOne(productInfo);
+            res.send(result);
+        })
+
+
+
+
+
+        // get all products
+        app.get('/products', async (req, res) => {
+            const result = await productsCollection.find().toArray();
+            res.send(result);
+        })
+
+        // get single product by id
+        app.get('/product-details/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await productsCollection.findOne(query);
+            res.send(result);
+        })
+
+        // to get users product from db: get cart by email
+        // http://localhost:5000/cart?email=user@gmail.com
+        app.get('/cart', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email }
+            const result = await cartCollection.find(query).toArray();
             res.send(result);
         })
 
