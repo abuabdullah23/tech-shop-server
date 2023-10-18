@@ -28,8 +28,15 @@ async function run() {
         // await client.connect();
 
         // ================ create db collection and api start ======================
+        const productsCollection = client.db("techShopDB").collection("products")
 
-
+        // all post method
+        app.post('/add-product', async (req, res) => {
+            const productInfo = req.body;
+            console.log(productInfo);
+            const result = await productsCollection.insertOne(productInfo);
+            res.send(result);
+        })
 
         // ================ create db collection and api end ========================
 
