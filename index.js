@@ -72,6 +72,15 @@ async function run() {
             res.send(result);
         })
 
+
+        // delete cart by id
+        app.delete('/cart/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await cartCollection.deleteOne(query);
+            res.send(result)
+        })
+
         // ================ create db collection and api end ========================
 
         // Send a ping to confirm a successful connection
