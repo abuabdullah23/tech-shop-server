@@ -63,6 +63,28 @@ async function run() {
             res.send(result);
         })
 
+        // update single product by id
+        app.put('/update-product/:id', async (req, res) => {
+            const id = req.params.id;
+            const productInfo = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateProduct = {
+                $set: {
+                    name: productInfo.name,
+                    userMail: productInfo.userMail,
+                    image: productInfo.image,
+                    brandName: productInfo.brandName,
+                    type: productInfo.type,
+                    price: productInfo.price,
+                    rating: productInfo.rating,
+                    description: productInfo.description
+                }
+            }
+            const result = await productsCollection.updateOne(filter, updateProduct, options);
+            res.send(result);
+        })
+
         // to get users product from db: get cart by email
         // http://localhost:5000/cart?email=user@gmail.com
         app.get('/cart', async (req, res) => {
